@@ -1,4 +1,3 @@
-import os
 from database import create_tables
 from seed import seed_data
 from queries import (
@@ -8,15 +7,8 @@ from queries import (
     get_customer_orders,
 )
 
-DB_FILE = "ecommerce.db"
-
 def main():
     """Main function to run the e-commerce module."""
-    # Start with a clean database file
-    if os.path.exists(DB_FILE):
-        os.remove(DB_FILE)
-        print(f"Removed existing database file: {DB_FILE}")
-
     # Create database and tables
     create_tables()
     print("Database tables created.")
@@ -46,10 +38,16 @@ def main():
         print(f"  - Order #{order.id}: Customer #{order.customer_id}, Product #{order.product_id}, Quantity: {order.quantity}")
 
     # Fetch and print orders for a specific customer
-    print("\nOrders for Customer #1 (Alice Smith):")
-    customer_orders = get_customer_orders(1)
-    for order in customer_orders:
-        print(f"  - Order #{order['id']}: {order['quantity']} x {order['product_name']} @ ${order['price']:.2f}")
+    if customers:
+        customer_id_to_check = customers[0].id
+        customer_name = customers[0].name
+        print(f"\nOrders for Customer #{customer_id_to_check} ({customer_name}):")
+        customer_orders = get_customer_orders(customer_id_to_check)
+        if customer_orders:
+            for order in customer_orders:
+                print(f"  - Order #{order['id']}: {order['quantity']} x {order['product_name']} @ ${order['price']:.2f}")
+        else:
+            print(f"  - No orders found for {customer_name}.")
 
 
 if __name__ == "__main__":
